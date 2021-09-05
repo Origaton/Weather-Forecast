@@ -3,8 +3,8 @@ package com.example.weatherforecast
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.weatherforecast.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
@@ -12,8 +12,6 @@ import kotlinx.coroutines.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bindingClass: ActivityMainBinding
-    private lateinit var viewHandlerInterface: ViewHandlerInterface
-    private lateinit var locationInfo: LocationInfo
 
     private val context: Context = this
 
@@ -22,7 +20,6 @@ class MainActivity : AppCompatActivity() {
         bindingClass = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bindingClass.root)
 
-        viewHandlerInterface = ViewHandler(bindingClass)
         checkPermission()
     }
 
@@ -37,6 +34,7 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 REQUEST_PERMISSION_CODE
             )
+            return
         } else {
             CoroutineScope(Dispatchers.IO).launch {
                 getCurrentLocation(context)
@@ -52,25 +50,28 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                CoroutineScope(Dispatchers.IO).launch {
+                CoroutineScope(Dispatchers.Default).launch {
                     getCurrentLocation(context)
                 }
             } else {
-                locationInfo = LocationInfo(DEFAULT_CITY, DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+                LocationManager(context, bindingClass).setLocation(
+                    true,
+                    LocationInfo(
+                        DEFAULT_CITY,
+                        DEFAULT_LATITUDE,
+                        DEFAULT_LONGITUDE
+                    )
+                )
+
             }
         }
     }
 
     private suspend fun getCurrentLocation(context: Context) = coroutineScope {
-        val info = async(Dispatchers.IO) { CurrentLocation(context).getLastLocation() }
-        locationInfo = if (info.await() != null) {
-            info.await()!!
-        } else {
-            LocationInfo(DEFAULT_CITY, DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+        launch(Dispatchers.IO) {
+            LocationManager(context, bindingClass).setLocation(false, null)
         }
-        viewHandlerInterface.realiseButton(locationInfo)
     }
-
 
     companion object {
         private const val REQUEST_PERMISSION_CODE = 123
