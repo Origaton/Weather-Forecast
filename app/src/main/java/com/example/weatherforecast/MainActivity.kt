@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
@@ -84,7 +86,7 @@ class MainActivity : AppCompatActivity() {
         val weatherInfo: WeatherInfo = withContext(Dispatchers.IO) {
             WeatherManager(locationInfo).getCurrentData()
         }
-        Log.d("location_test","$weatherInfo")
+        Log.d("location_test", "$weatherInfo")
         viewHandlerInterface.storage(locationInfo, weatherInfo)
     }
 

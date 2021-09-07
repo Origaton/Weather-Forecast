@@ -1,5 +1,7 @@
 package com.example.weatherforecast
 
+import android.view.View
+import android.widget.ProgressBar
 import com.example.weatherforecast.databinding.ActivityMainBinding
 import com.example.weatherforecast.weather_api.WeatherInfo
 
@@ -15,6 +17,8 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
             )
             val pressure = DataConverter().hPaConvertToMmHg(weatherInfo.current.pressure)
 
+            bindingClass.infoLayout.visibility = View.VISIBLE
+
             showCurrentTemperature(
                 weatherInfo.current.temp.toInt().toString(),
                 weatherInfo.current.feels_like.toInt().toString()
@@ -29,6 +33,7 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
             )
             showLastUpdateTime(timeData[0])
         }
+        bindingClass.weatherInfoLoading.visibility = ProgressBar.GONE
     }
 
     override fun showCity(city: String) {
@@ -36,7 +41,10 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
     }
 
     override fun showCurrentTemperature(temp: String, feelsLike: String) {
+        bindingClass.currentTemperature.visibility = View.VISIBLE
         bindingClass.currentTemperature.text = "$temp°C"
+
+        bindingClass.feelsTemperature.visibility = View.VISIBLE
         bindingClass.feelsTemperature.text = "Ощущается как $feelsLike°C"
     }
 
@@ -48,15 +56,27 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
         humidity: String,
         pressure: String
     ) {
+        bindingClass.weatherType.visibility = View.VISIBLE
         bindingClass.weatherType.text = description
+
+        bindingClass.sunRiseLayout.visibility = View.VISIBLE
         bindingClass.sunRiseValue.text = sunrise
+
+        bindingClass.sunSetLayout.visibility = View.VISIBLE
         bindingClass.sunSetValue.text = sunset
+
+        bindingClass.windLayout.visibility = View.VISIBLE
         bindingClass.windValue.text = "$windSpeed м/с"
+
+        bindingClass.humidityLayout.visibility = View.VISIBLE
         bindingClass.humidityValue.text = "$humidity %"
+
+        bindingClass.pressureLayout.visibility = View.VISIBLE
         bindingClass.pressureValue.text = "$pressure мм рт. ст."
     }
 
     override fun showLastUpdateTime(dt: String) {
+        bindingClass.lastUpdate.visibility = View.VISIBLE
         bindingClass.lastUpdate.text = "Последнее обновление: $dt"
     }
 
