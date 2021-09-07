@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="actionButton">
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_width">200dp</item>
+        <item name="android:backgroundTint">@color/button_color</item>
+        <item name="android:textSize">15sp</item>
+        <item name="textAllCaps">false</item>
+    </style>
+</resources>
