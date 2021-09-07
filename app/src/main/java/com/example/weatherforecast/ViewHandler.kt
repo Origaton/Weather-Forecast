@@ -1,27 +1,23 @@
 package com.example.weatherforecast
 
 import com.example.weatherforecast.databinding.ActivityMainBinding
+import com.example.weatherforecast.weather_api.WeatherInfo
 
 class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerInterface {
 
-    override fun realiseButton(locationInfo: LocationInfo) {
-        bindingClass.button.setOnClickListener {
-            showCity(
-                locationInfo.cityName,
-                locationInfo.latitude.toString(),
-                locationInfo.longitude.toString()
-            )
+    override fun storage(locationInfo: LocationInfo, weatherInfo: WeatherInfo?) {
+        showCity(locationInfo.cityName)
+        if (weatherInfo != null) {
+            showTemperature(weatherInfo.current.temp)
         }
     }
 
-    override fun showCity(city: String, latitude: String, longitude: String) {
+    override fun showCity(city: String) {
         bindingClass.currentCity.text = city
-        bindingClass.latitudeAndLongitude.text = latitude
-        bindingClass.currentTemperature.text = longitude
     }
 
-    override fun showTemperature(temperature: String) {
-        bindingClass.currentTemperature.text = temperature
+    override fun showTemperature(temperature: Double) {
+        bindingClass.currentTemperature.text = temperature.toString()
     }
 
 }

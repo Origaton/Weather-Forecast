@@ -3,43 +3,51 @@ package com.example.weatherforecast
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
-import com.example.weatherforecast.databinding.ActivityMainBinding
+import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.*
 
-class LocationManager(private var context: Context, private val bindingClass: ActivityMainBinding) {
+class LocationManager(private var context: Context) {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var viewHandlerInterface: ViewHandlerInterface
 
-    fun setLocation(defaultConfiguration: Boolean, locationInfo: LocationInfo?) {
+    suspend fun setLocation(defaultConfiguration: Boolean): LocationInfo = coroutineScope {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        viewHandlerInterface = ViewHandler(bindingClass)
-        if (defaultConfiguration && locationInfo != null) {
-            setDefaultLocation(locationInfo)
-        } else {
-            setCurrentLocation()
+        return@coroutineScope when (defaultConfiguration) {
+            false -> setCurrentLocation()
+            else -> setDefaultLocation()
+        }
+    }
+
+    private suspend fun setCurrentLocation(): LocationInfo = coroutineScope {
+        return@coroutineScope withContext(Dispatchers.IO) {
+            getCurrentLocation()
         }
     }
 
     @SuppressLint("MissingPermission")
-    private fun setCurrentLocation() {
+    private suspend fun getCurrentLocation() = coroutineScope {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            viewHandlerInterface.realiseButton(
-                LocationInfo(
-                    cityName = Geocoder(context).getFromLocation(
-                        location.latitude,
-                        location.longitude,
-                        1
-                    ).first().subLocality,
-                    latitude = location.latitude,
-                    longitude = location.longitude
-                )
+            LocationInfo(
+                cityName = Geocoder(context).getFromLocation(
+                    location.latitude,
+                    location.longitude,
+                    1
+                ).first().subLocality,
+                latitude = location.latitude,
+                longitude = location.longitude
             )
         }
     }
 
-    private fun setDefaultLocation(locationInfo: LocationInfo) {
-        viewHandlerInterface.realiseButton(locationInfo)
+    private suspend fun setDefaultLocation(): LocationInfo = coroutineScope {
+        return@coroutineScope LocationInfo(DEFAULT_CITY, DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+    }
+
+    companion object {
+        private const val DEFAULT_CITY = "Москва"
+        private const val DEFAULT_LATITUDE = 55.7522
+        private const val DEFAULT_LONGITUDE = 37.6156
     }
 }
