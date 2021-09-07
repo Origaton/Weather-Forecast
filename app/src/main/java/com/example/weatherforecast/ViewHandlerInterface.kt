@@ -20,4 +20,6 @@ interface ViewHandlerInterface {
     )
 
     fun showLastUpdateTime(dt: String)
+
+    fun showLoading()
 }

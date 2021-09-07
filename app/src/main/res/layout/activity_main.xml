@@ -8,6 +8,31 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <EditText
+        android:id="@+id/currentLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:ems="10"
+        android:inputType="textCapSentences"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:outlineSpotShadowColor="@color/white" />
+
     <ProgressBar
         android:id="@+id/weatherInfoLoading"
         android:layout_width="100dp"
@@ -18,17 +43,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
-        android:id="@+id/currentLocation"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </Spinner>
 
     <TextView
         android:id="@+id/lastUpdate"

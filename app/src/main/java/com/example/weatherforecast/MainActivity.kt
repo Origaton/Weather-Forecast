@@ -3,10 +3,13 @@ package com.example.weatherforecast
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.input.InputManager
 import android.os.Bundle
-import android.util.Log
+import android.view.KeyEvent
 import android.view.View
-import android.widget.ProgressBar
+import android.view.WindowManager
+import android.view.inputmethod.InputBinding
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
@@ -27,8 +30,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(bindingClass.root)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         viewHandlerInterface = ViewHandler(bindingClass)
+    }
+
+    override fun onStart() {
+        super.onStart()
 
         checkPermission()
+        CoroutineScope(Dispatchers.Main).launch {
+            getCustomLocation()
+        }
     }
 
     private fun checkPermission() {
@@ -74,19 +84,44 @@ class MainActivity : AppCompatActivity() {
         coroutineScope {
             val location: LocationInfo = withContext(Dispatchers.IO) {
                 if (defaultConfiguration) {
-                    LocationManager(context).setLocation(true)
+                    LocationManager(context).setCurrentLocation(true)
                 } else {
-                    LocationManager(context).setLocation(false)
+                    LocationManager(context).setCurrentLocation(false)
                 }
             }
             getWeatherInfo(location)
         }
 
+    private suspend fun getCustomLocation() = coroutineScope {
+        bindingClass.currentLocation.setOnKeyListener(object : View.OnKeyListener {
+            override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
+                if (event.action == KeyEvent.ACTION_DOWN &&
+                    keyCode == KeyEvent.KEYCODE_ENTER
+                ) {
+                    run {
+                        viewHandlerInterface.showLoading()
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val newLocation: LocationInfo = withContext(Dispatchers.IO) {
+                                LocationManager(context).setCustomLocation(bindingClass.currentLocation.text.toString())
+                            }
+                            getWeatherInfo(newLocation)
+                        }
+                    }
+                    if (bindingClass.currentLocation.isFocused) {
+                        bindingClass.currentLocation.clearFocus()
+                        bindingClass.currentLocation.hint = ""
+                    }
+                    return true
+                }
+                return false
+            }
+        })
+    }
+
     private suspend fun getWeatherInfo(locationInfo: LocationInfo) = coroutineScope {
         val weatherInfo: WeatherInfo = withContext(Dispatchers.IO) {
-            WeatherManager(locationInfo).getCurrentData()
+            WeatherManager(locationInfo).getCurrentLocationData()
         }
-        Log.d("location_test", "$weatherInfo")
         viewHandlerInterface.storage(locationInfo, weatherInfo)
     }
 

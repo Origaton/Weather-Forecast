@@ -3,17 +3,21 @@ package com.example.weatherforecast
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
+import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.*
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class LocationManager(private var context: Context) {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationInfo: LocationInfo
     private var isSuccess: Boolean = false
+    private val key: String = "meY8hgyVw6l18Z0uuXbXaA9Y6HrUenAL"
 
-    suspend fun setLocation(defaultConfiguration: Boolean): LocationInfo = coroutineScope {
+    suspend fun setCurrentLocation(defaultConfiguration: Boolean): LocationInfo = coroutineScope {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         do {
             getCurrentLocation()
@@ -45,6 +49,25 @@ class LocationManager(private var context: Context) {
 
     private suspend fun setDefaultLocation(): LocationInfo = coroutineScope {
         return@coroutineScope LocationInfo(DEFAULT_CITY, DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+    }
+
+    suspend fun setCustomLocation(city: String): LocationInfo = coroutineScope {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(LOCATION_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val api = retrofit.create(ApiRequests::class.java)
+
+        Log.d("location_test","$city")
+        val response = async(Dispatchers.IO) {
+            api.getCustomCoordinates(key, city)
+        }
+        val customLocation = response.await()
+        return@coroutineScope LocationInfo(
+            cityName = city,
+            latitude = customLocation.results.component1().locations.component1().latLng.lat,
+            longitude = customLocation.results.component1().locations.component1().latLng.lng
+        )
     }
 
     companion object {

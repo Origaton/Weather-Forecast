@@ -37,7 +37,8 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
     }
 
     override fun showCity(city: String) {
-
+        bindingClass.currentLocation.visibility = View.VISIBLE
+        bindingClass.currentLocation.hint = city
     }
 
     override fun showCurrentTemperature(temp: String, feelsLike: String) {
@@ -80,4 +81,19 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
         bindingClass.lastUpdate.text = "Последнее обновление: $dt"
     }
 
+    override fun showLoading() {
+        bindingClass.currentLocation.visibility = View.GONE
+        bindingClass.lastUpdate.visibility = View.GONE
+        bindingClass.weatherType.visibility = View.GONE
+        bindingClass.currentTemperature.visibility = View.GONE
+        bindingClass.feelsTemperature.visibility = View.GONE
+        bindingClass.sunRiseLayout.visibility = View.GONE
+        bindingClass.sunSetLayout.visibility = View.GONE
+        bindingClass.windLayout.visibility = View.GONE
+        bindingClass.humidityLayout.visibility = View.GONE
+        bindingClass.pressureLayout.visibility = View.GONE
+        bindingClass.infoLayout.visibility = View.GONE
+
+        bindingClass.weatherInfoLoading.visibility = ProgressBar.VISIBLE
+    }
 }
