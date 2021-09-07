@@ -3,26 +3,28 @@ package com.example.weatherforecast
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import com.example.weatherforecast.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.example.weatherforecast.weather_api.WeatherInfo
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bindingClass: ActivityMainBinding
     private lateinit var viewHandlerInterface: ViewHandlerInterface
 
+    private val context: Context = this
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bindingClass = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bindingClass.root)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        viewHandlerInterface = ViewHandler(bindingClass)
 
-        ViewHandler(bindingClass)
         checkPermission()
     }
 
@@ -39,7 +41,9 @@ class MainActivity : AppCompatActivity() {
             )
             return
         } else {
-            getCurrentLocation(this)
+            CoroutineScope(Dispatchers.Main).launch {
+                getCurrentLocation(context, false)
+            }
         }
     }
 
@@ -49,26 +53,39 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocation(this)
-            } else {
-                LocationInfo(DEFAULT_CITY, DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+        when (requestCode == REQUEST_PERMISSION_CODE) {
+            grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED -> {
+                CoroutineScope(Dispatchers.Main).launch {
+                    getCurrentLocation(context, false)
+                }
+            }
+            grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED -> {
+                CoroutineScope(Dispatchers.Main).launch {
+                    getCurrentLocation(context, true)
+                }
             }
         }
     }
 
-    private fun getCurrentLocation(context: Context) {
-        CoroutineScope(Dispatchers.IO).launch {
-            CurrentLocation(context).getLastLocation()
+    private suspend fun getCurrentLocation(context: Context, defaultConfiguration: Boolean) =
+        coroutineScope {
+            val location: LocationInfo = withContext(Dispatchers.IO) {
+                if (defaultConfiguration) {
+                    LocationManager(context).setLocation(true)
+                } else {
+                    LocationManager(context).setLocation(false)
+                }
+            }
+            getWeatherInfo(location)
+        }
+
+    private suspend fun getWeatherInfo(locationInfo: LocationInfo) = coroutineScope {
+        val weather: WeatherInfo = withContext(Dispatchers.IO) {
+            WeatherManager(locationInfo).getCurrentData()
         }
     }
 
-
     companion object {
         private const val REQUEST_PERMISSION_CODE = 123
-        private const val DEFAULT_CITY = "Москва"
-        private const val DEFAULT_LATITUDE = 55.7522
-        private const val DEFAULT_LONGITUDE = 37.6156
     }
 }
