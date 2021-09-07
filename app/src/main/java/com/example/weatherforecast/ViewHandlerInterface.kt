@@ -8,6 +8,14 @@ interface ViewHandlerInterface {
 
     fun showCity(city: String)
 
-    fun showTemperature(temperature: Double)
+    fun showCurrentTemperature(temp: String, feelsLike: String)
 
+    fun showWeatherParameters(
+        description: String,
+        sunrise: String,
+        sunset: String,
+        windSpeed: String,
+        humidity: String,
+        pressure: String
+    )
 }

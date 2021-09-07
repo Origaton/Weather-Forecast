@@ -35,7 +35,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="Облачно"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lastUpdate" />
@@ -45,8 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="28°С"
-        android:textSize="100sp"
+        android:textSize="80sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weatherType" />
@@ -56,17 +54,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="По ощущениям: 26°C"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/currentTemperature" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sunRiseLayout"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="25dp"
+        style="@style/plateStyle"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/windLayout"
         app:layout_constraintEnd_toStartOf="@+id/sunSetLayout"
         app:layout_constraintStart_toStartOf="parent">
@@ -75,6 +71,7 @@
             android:id="@+id/sunRiseImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -95,7 +92,7 @@
             android:id="@+id/sunRiseValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -103,9 +100,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sunSetLayout"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="25dp"
+        style="@style/plateStyle"
+        android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/windLayout"
         app:layout_constraintEnd_toStartOf="@+id/windLayout">
 
@@ -113,17 +109,18 @@
             android:id="@+id/sunSetImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/sunset"
-            app:tint="@color/white"/>
+            app:tint="@color/white" />
 
         <TextView
             android:id="@+id/sunSetValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -141,10 +138,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/windLayout"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="40dp"
+        style="@style/plateStyle"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/infoLayout"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -152,6 +148,7 @@
             android:id="@+id/windImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -162,7 +159,7 @@
             android:id="@+id/windValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -180,10 +177,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/humidityLayout"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="25dp"
+        style="@style/plateStyle"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/infoLayout"
         app:layout_constraintEnd_toStartOf="@+id/pressureLayout"
         app:layout_constraintStart_toStartOf="parent">
@@ -192,6 +188,7 @@
             android:id="@+id/humidityImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -202,7 +199,7 @@
             android:id="@+id/humidityValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -220,9 +217,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pressureLayout"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="25dp"
+        style="@style/plateStyle"
+        android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/infoLayout"
         app:layout_constraintEnd_toStartOf="@+id/infoLayout">
 
@@ -230,6 +226,7 @@
             android:id="@+id/pressureImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -240,7 +237,7 @@
             android:id="@+id/pressureValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -258,10 +255,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/infoLayout"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="40dp"
+        style="@style/plateStyle"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -269,6 +265,7 @@
             android:id="@+id/infoImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

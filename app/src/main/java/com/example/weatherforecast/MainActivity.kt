@@ -80,9 +80,10 @@ class MainActivity : AppCompatActivity() {
         }
 
     private suspend fun getWeatherInfo(locationInfo: LocationInfo) = coroutineScope {
-        val weather: WeatherInfo = withContext(Dispatchers.IO) {
+        val weatherInfo: WeatherInfo = withContext(Dispatchers.IO) {
             WeatherManager(locationInfo).getCurrentData()
         }
+        viewHandlerInterface.storage(locationInfo, weatherInfo)
     }
 
     companion object {
