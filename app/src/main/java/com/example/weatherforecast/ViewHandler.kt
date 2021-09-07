@@ -8,18 +8,26 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
     override fun storage(locationInfo: LocationInfo, weatherInfo: WeatherInfo?) {
         showCity(locationInfo.cityName)
         if (weatherInfo != null) {
+            val timeData: List<String> = DataConverter().convertCurrentTime(
+                weatherInfo.current.dt,
+                weatherInfo.current.sunrise,
+                weatherInfo.current.sunset
+            )
+            val pressure = DataConverter().hPaConvertToMmHg(weatherInfo.current.pressure)
+
             showCurrentTemperature(
                 weatherInfo.current.temp.toInt().toString(),
                 weatherInfo.current.feels_like.toInt().toString()
             )
             showWeatherParameters(
                 weatherInfo.current.weather[0].description,
-                weatherInfo.current.sunrise.toInt().toString(),
-                weatherInfo.current.sunset.toInt().toString(),
+                timeData[1],
+                timeData[2],
                 weatherInfo.current.wind_speed.toInt().toString(),
                 weatherInfo.current.humidity.toInt().toString(),
-                weatherInfo.current.pressure.toInt().toString()
+                pressure
             )
+            showLastUpdateTime(timeData[0])
         }
     }
 
@@ -45,7 +53,11 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
         bindingClass.sunSetValue.text = sunset
         bindingClass.windValue.text = "$windSpeed м/с"
         bindingClass.humidityValue.text = "$humidity %"
-        bindingClass.pressureValue.text = "$pressure гПа"
+        bindingClass.pressureValue.text = "$pressure мм рт. ст."
+    }
+
+    override fun showLastUpdateTime(dt: String) {
+        bindingClass.lastUpdate.text = "Последнее обновление: $dt"
     }
 
 }

@@ -18,4 +18,6 @@ interface ViewHandlerInterface {
         humidity: String,
         pressure: String
     )
+
+    fun showLastUpdateTime(dt: String)
 }
