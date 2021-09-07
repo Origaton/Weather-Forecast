@@ -3,9 +3,7 @@ package com.example.weatherforecast
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
@@ -55,12 +53,13 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        when (requestCode == REQUEST_PERMISSION_CODE) {
+            grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED -> {
                 CoroutineScope(Dispatchers.Main).launch {
                     getCurrentLocation(context, false)
                 }
-            } else {
+            }
+            grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED -> {
                 CoroutineScope(Dispatchers.Main).launch {
                     getCurrentLocation(context, true)
                 }
@@ -68,7 +67,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun getCurrentLocation(context: Context, defaultConfiguration: Boolean) = coroutineScope {
+    private suspend fun getCurrentLocation(context: Context, defaultConfiguration: Boolean) =
+        coroutineScope {
             val location: LocationInfo = withContext(Dispatchers.IO) {
                 if (defaultConfiguration) {
                     LocationManager(context).setLocation(true)
@@ -83,8 +83,6 @@ class MainActivity : AppCompatActivity() {
         val weather: WeatherInfo = withContext(Dispatchers.IO) {
             WeatherManager(locationInfo).getCurrentData()
         }
-        viewHandlerInterface.storage(locationInfo, weather)
-
     }
 
     companion object {

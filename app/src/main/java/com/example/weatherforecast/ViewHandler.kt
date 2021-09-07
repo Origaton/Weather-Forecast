@@ -13,7 +13,7 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
     }
 
     override fun showCity(city: String) {
-        bindingClass.currentCity.text = city
+        //bindingClass.currentCity.text = city
     }
 
     override fun showTemperature(temperature: Double) {
