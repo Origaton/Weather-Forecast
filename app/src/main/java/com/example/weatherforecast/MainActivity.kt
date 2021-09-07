@@ -7,6 +7,7 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import com.example.weatherforecast.databinding.ActivityMainBinding
 import com.example.weatherforecast.weather_api.WeatherInfo
@@ -22,8 +23,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bindingClass = ActivityMainBinding.inflate(layoutInflater)
-        viewHandlerInterface = ViewHandler(bindingClass)
         setContentView(bindingClass.root)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        viewHandlerInterface = ViewHandler(bindingClass)
 
         checkPermission()
     }
