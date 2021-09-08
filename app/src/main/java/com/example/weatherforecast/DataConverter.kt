@@ -18,4 +18,16 @@ class DataConverter {
         val newPressure = pressure * 0.7501
         return newPressure.toInt().toString()
     }
+
+    @SuppressLint("SimpleDateFormat")
+    fun convertHourlyTime(dt: Double): String {
+        val dataFormat = SimpleDateFormat("HH:mm")
+        return dataFormat.format(dt * 1000)
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun convertDailyTime(dt: Double): String {
+        val dataFormat = SimpleDateFormat("dd.MM")
+        return dataFormat.format(dt * 1000)
+    }
 }

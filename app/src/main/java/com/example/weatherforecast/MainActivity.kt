@@ -3,13 +3,9 @@ package com.example.weatherforecast
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.hardware.input.InputManager
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
-import android.view.WindowManager
-import android.view.inputmethod.InputBinding
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
