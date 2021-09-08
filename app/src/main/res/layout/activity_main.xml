@@ -29,11 +29,11 @@
 
         <EditText
             android:id="@+id/currentLocation"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:autofillHints="false"
-            android:background="@android:color/transparent"
+            android:backgroundTint="@color/dark_blue"
             android:ems="10"
             android:inputType="textCapSentences"
             android:textAlignment="center"
@@ -43,8 +43,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="LabelFor"
-            tools:outlineSpotShadowColor="@color/white" />
+            tools:ignore="LabelFor" />
+
+        <ImageView
+            android:id="@+id/searchImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/currentLocation"
+            app:layout_constraintEnd_toStartOf="@+id/currentLocation"
+            app:layout_constraintTop_toTopOf="@+id/currentLocation"
+            app:srcCompat="?android:attr/actionModeWebSearchDrawable"
+            app:tint="@color/white" />
 
         <ProgressBar
             android:id="@+id/weatherInfoLoading"

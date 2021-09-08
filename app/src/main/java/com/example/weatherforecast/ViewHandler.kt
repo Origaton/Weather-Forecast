@@ -46,6 +46,8 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
     }
 
     override fun showCity(city: String) {
+        bindingClass.searchImage.visibility = View.VISIBLE
+
         bindingClass.currentLocation.visibility = View.VISIBLE
         bindingClass.currentLocation.hint = city
     }
@@ -103,63 +105,68 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
 
     override fun showHourlyForecast(weatherInfo: WeatherInfo) {
         //one hour
-        bindingClass.afterOneHour.text = DataConverter().convertHourlyTime(weatherInfo.hourly[1].dt)
-        showWeatherImage(
-            weatherInfo.hourly[1].weather[0].id.toString()[0],
-            bindingClass.afterOneHourImage
+        setHourlyWeather(
+            bindingClass.afterOneHour,
+            bindingClass.afterOneHourImage,
+            bindingClass.afterOneHourTemperature,
+            weatherInfo,
+            1
         )
-        if (weatherInfo.hourly[1].weather[0].id == 800) {
-            bindingClass.afterOneHourImage.setImageResource(R.drawable.sunny)
-        }
-        bindingClass.afterOneHourTemperature.text = "${weatherInfo.hourly[1].temp.toInt()}°C"
 
         //two hours
-        bindingClass.afterTwoHours.text =
-            DataConverter().convertHourlyTime(weatherInfo.hourly[2].dt)
-        showWeatherImage(
-            weatherInfo.hourly[2].weather[0].id.toString()[0],
-            bindingClass.afterTwoHoursImage
+        setHourlyWeather(
+            bindingClass.afterTwoHours,
+            bindingClass.afterTwoHoursImage,
+            bindingClass.afterTwoHoursTemperature,
+            weatherInfo,
+            2
         )
-        if (weatherInfo.hourly[2].weather[0].id == 800) {
-            bindingClass.afterTwoHoursImage.setImageResource(R.drawable.sunny)
-        }
-        bindingClass.afterTwoHoursTemperature.text = "${weatherInfo.hourly[2].temp.toInt()}°C"
 
         //three hours
-        bindingClass.afterThreeHours.text =
-            DataConverter().convertHourlyTime(weatherInfo.hourly[3].dt)
-        showWeatherImage(
-            weatherInfo.hourly[3].weather[0].id.toString()[0],
-            bindingClass.afterThreeHoursImage
+        setHourlyWeather(
+            bindingClass.afterThreeHours,
+            bindingClass.afterThreeHoursImage,
+            bindingClass.afterThreeHoursTemperature,
+            weatherInfo,
+            3
         )
-        if (weatherInfo.hourly[3].weather[0].id == 800) {
-            bindingClass.afterThreeHoursImage.setImageResource(R.drawable.sunny)
-        }
-        bindingClass.afterThreeHoursTemperature.text = "${weatherInfo.hourly[3].temp.toInt()}°C"
 
         //four hours
-        bindingClass.afterFourHours.text =
-            DataConverter().convertHourlyTime(weatherInfo.hourly[4].dt)
-        showWeatherImage(
-            weatherInfo.hourly[4].weather[0].id.toString()[0],
-            bindingClass.afterFourHoursImage
+        setHourlyWeather(
+            bindingClass.afterFourHours,
+            bindingClass.afterFourHoursImage,
+            bindingClass.afterFourHoursTemperature,
+            weatherInfo,
+            4
         )
-        if (weatherInfo.hourly[4].weather[0].id == 800) {
-            bindingClass.afterFourHoursImage.setImageResource(R.drawable.sunny)
-        }
-        bindingClass.afterFourHoursTemperature.text = "${weatherInfo.hourly[4].temp.toInt()}°C"
 
         //five hours
-        bindingClass.afterFiveHours.text =
-            DataConverter().convertHourlyTime(weatherInfo.hourly[5].dt)
-        showWeatherImage(
-            weatherInfo.hourly[5].weather[0].id.toString()[0],
-            bindingClass.afterFiveHoursImage
+        setHourlyWeather(
+            bindingClass.afterFiveHours,
+            bindingClass.afterFiveHoursImage,
+            bindingClass.afterFiveHoursTemperature,
+            weatherInfo,
+            5
         )
-        if (weatherInfo.hourly[5].weather[0].id == 800) {
-            bindingClass.afterFiveHoursImage.setImageResource(R.drawable.sunny)
+    }
+
+    override fun setHourlyWeather(
+        textView: TextView,
+        imageView: ImageView,
+        textViewTemp: TextView,
+        weatherInfo: WeatherInfo,
+        hour: Int
+    ) {
+        textView.text =
+            DataConverter().convertHourlyTime(weatherInfo.hourly[hour].dt)
+        showWeatherImage(
+            weatherInfo.hourly[hour].weather[0].id.toString()[0],
+            imageView
+        )
+        if (weatherInfo.hourly[hour].weather[0].id == 800) {
+            imageView.setImageResource(R.drawable.sunny)
         }
-        bindingClass.afterFiveHoursTemperature.text = "${weatherInfo.hourly[5].temp.toInt()}°C"
+        textViewTemp.text = "${weatherInfo.hourly[hour].temp.toInt()}°C"
     }
 
     override fun showDailyForecast(weatherInfo: WeatherInfo) {
@@ -253,13 +260,14 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
             '3' -> imageView.setImageResource(R.drawable.very_cloudy)
             '5' -> imageView.setImageResource(R.drawable.rainy)
             '6' -> imageView.setImageResource(R.drawable.snowy)
-            '7' -> imageView.setImageResource(R.drawable.hurricane)
+            '7' -> imageView.setImageResource(R.drawable.fog)
             '8' -> imageView.setImageResource(R.drawable.cloudy)
         }
     }
 
     override fun showLoading() {
         bindingClass.currentLocation.visibility = View.GONE
+        bindingClass.searchImage.visibility = View.GONE
         bindingClass.lastUpdate.visibility = View.GONE
         bindingClass.weatherType.visibility = View.GONE
         bindingClass.currentTemperature.visibility = View.GONE
@@ -274,5 +282,24 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
         bindingClass.easterEgg.visibility = View.GONE
 
         bindingClass.weatherInfoLoading.visibility = ProgressBar.VISIBLE
+    }
+
+    override fun hideLoading() {
+        bindingClass.currentLocation.visibility = View.VISIBLE
+        bindingClass.searchImage.visibility = View.VISIBLE
+        bindingClass.lastUpdate.visibility = View.VISIBLE
+        bindingClass.weatherType.visibility = View.VISIBLE
+        bindingClass.currentTemperature.visibility = View.VISIBLE
+        bindingClass.feelsTemperature.visibility = View.VISIBLE
+        bindingClass.sunRiseLayout.visibility = View.VISIBLE
+        bindingClass.sunSetLayout.visibility = View.VISIBLE
+        bindingClass.windLayout.visibility = View.VISIBLE
+        bindingClass.humidityLayout.visibility = View.VISIBLE
+        bindingClass.pressureLayout.visibility = View.VISIBLE
+        bindingClass.cloudinessLayout.visibility = View.VISIBLE
+        bindingClass.forecastLayout.visibility = View.VISIBLE
+        bindingClass.easterEgg.visibility = View.VISIBLE
+
+        bindingClass.weatherInfoLoading.visibility = ProgressBar.GONE
     }
 }

@@ -32,6 +32,14 @@ interface ViewHandlerInterface {
 
     fun showLastUpdateTime(dt: String)
 
+    fun setHourlyWeather(
+        textView: TextView,
+        imageView: ImageView,
+        textViewTemp: TextView,
+        weatherInfo: WeatherInfo,
+        hour: Int
+    )
+
     fun setDailyWeather(
         textView: TextView,
         imageView: ImageView,
@@ -43,4 +51,6 @@ interface ViewHandlerInterface {
     fun showWeatherImage(id: Char, imageView: ImageView)
 
     fun showLoading()
+
+    fun hideLoading()
 }

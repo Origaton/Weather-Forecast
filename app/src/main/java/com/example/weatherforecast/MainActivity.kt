@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
@@ -71,6 +73,11 @@ class MainActivity : AppCompatActivity() {
             grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED -> {
                 CoroutineScope(Dispatchers.Main).launch {
                     getCurrentLocation(context, true)
+                    Toast.makeText(
+                        context,
+                        "Показано местоположение по умолчанию",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -89,7 +96,13 @@ class MainActivity : AppCompatActivity() {
         }
 
     private suspend fun getCustomLocation() = coroutineScope {
-        bindingClass.currentLocation.setOnKeyListener(object : View.OnKeyListener {
+        val field = bindingClass.currentLocation
+
+        field.setOnFocusChangeListener { _, _ ->
+            field.hint = ""
+        }
+
+        field.setOnKeyListener(object : View.OnKeyListener {
             override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
                 if (event.action == KeyEvent.ACTION_DOWN &&
                     keyCode == KeyEvent.KEYCODE_ENTER
@@ -97,16 +110,25 @@ class MainActivity : AppCompatActivity() {
                     run {
                         viewHandlerInterface.showLoading()
                         CoroutineScope(Dispatchers.Main).launch {
-                            val newLocation: LocationInfo = withContext(Dispatchers.IO) {
-                                LocationManager(context).setCustomLocation(bindingClass.currentLocation.text.toString())
+                            val newLocation: LocationInfo? = withContext(Dispatchers.IO) {
+                                LocationManager(context).setCustomLocation(field.text.toString())
                             }
-                            getWeatherInfo(newLocation)
+                            if (newLocation != null) {
+                                getWeatherInfo(newLocation)
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Некорректное название города",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                viewHandlerInterface.hideLoading()
+                            }
                         }
+                        field.clearFocus()
+                        field.hint = ""
+                        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
                     }
-                    if (bindingClass.currentLocation.isFocused) {
-                        bindingClass.currentLocation.clearFocus()
-                        bindingClass.currentLocation.hint = ""
-                    }
+
                     return true
                 }
                 return false
