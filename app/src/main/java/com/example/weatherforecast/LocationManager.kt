@@ -17,46 +17,49 @@ class LocationManager(private var context: Context) {
     private var isSuccess: Boolean = false
     private val appid: String = "ea420f80f3ce89a6e2d374952f12b8a6"
 
-    suspend fun setCurrentLocation(defaultConfiguration: Boolean): LocationInfo = coroutineScope {
+    fun setCurrentLocation(defaultConfiguration: Boolean): LocationInfo {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         if (!defaultConfiguration) {
             do {
                 getCurrentLocation()
             } while (!isSuccess)
         }
-        return@coroutineScope when (defaultConfiguration) {
+        return when (defaultConfiguration) {
             false -> locationInfo
             true -> setDefaultLocation()
         }
     }
 
     @SuppressLint("MissingPermission")
-    private suspend fun getCurrentLocation() = coroutineScope {
+    private fun getCurrentLocation() {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            locationInfo = LocationInfo(
-                Geocoder(context).getFromLocation(
+            locationInfo = if (location != null) {
+                LocationInfo(
+                    Geocoder(context).getFromLocation(
+                        location.latitude,
+                        location.longitude,
+                        1
+                    ).first().locality,
                     location.latitude,
-                    location.longitude,
-                    1
-                ).first().locality,
-                location.latitude,
-                location.longitude
-            )
+                    location.longitude
+                )
+            } else {
+                LocationInfo(DEFAULT_CITY, DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+            }
             isSuccess = true
         }.addOnFailureListener {
             Toast.makeText(
                 context,
-                "Ошибка при получении местоположения. Установленно местоположение по умолчанию",
+                "Ошибка при получении местоположения\nУстановленно местоположение по умолчанию",
                 Toast.LENGTH_SHORT
             ).show()
             locationInfo = LocationInfo(DEFAULT_CITY, DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
             isSuccess = true
-
         }
     }
 
-    private suspend fun setDefaultLocation(): LocationInfo = coroutineScope {
-        return@coroutineScope LocationInfo(DEFAULT_CITY, DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+    private  fun setDefaultLocation(): LocationInfo {
+        return LocationInfo(DEFAULT_CITY, DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
     }
 
     suspend fun setCustomLocation(city: String): LocationInfo = coroutineScope {

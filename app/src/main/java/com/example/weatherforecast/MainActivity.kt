@@ -4,13 +4,9 @@ import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.inputmethodservice.InputMethodService
 import android.os.Bundle
-import android.os.TokenWatcher
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -50,7 +46,6 @@ class MainActivity : AppCompatActivity() {
 
         if (sharedPreference.contains("location") && sharedPreference.contains("weather")) {
             bindingClass.weatherInfoUpdating.visibility = ProgressBar.VISIBLE
-            Log.d("location_test", "fuck")
             val savedLocation: LocationInfo =
                 Gson().fromJson(
                     sharedPreference.getString("location", ""),
@@ -58,8 +53,10 @@ class MainActivity : AppCompatActivity() {
                 )
             val savedWeather: WeatherInfo =
                 Gson().fromJson(sharedPreference.getString("weather", ""), WeatherInfo::class.java)
-            Log.d("location_test", "$savedLocation")
             if (savedLocation.cityName != null) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    getWeatherInfo(savedLocation)
+                }
                 viewHandlerInterface.storage(savedLocation, savedWeather)
             }
         }
@@ -114,8 +111,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun getCurrentLocation(context: Context, defaultConfiguration: Boolean) =
-        coroutineScope {
+    private suspend fun getCurrentLocation(context: Context, defaultConfiguration: Boolean) {
             locationInfo = withContext(Dispatchers.IO) {
                 if (defaultConfiguration) {
                     LocationManager(context).setCurrentLocation(true)
@@ -156,7 +152,8 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
 
-                        val i = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        val i =
+                            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         i.hideSoftInputFromWindow(field.windowToken, 0)
 
                         field.clearFocus()
@@ -191,6 +188,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+
         if (::locationInfo.isInitialized && ::weatherInfo.isInitialized) {
             val editor = sharedPreference.edit()
             editor.putString("location", Gson().toJson(locationInfo))
