@@ -37,7 +37,11 @@ class MainActivity : AppCompatActivity() {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         CoroutineScope(Dispatchers.Main).launch {
-            if (sharedPreference.contains("location") && sharedPreference.contains("weather")) {
+            if (sharedPreference.contains("location") && sharedPreference.contains("weather") && ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 showSavedData()
             } else {
                 checkPermission()
