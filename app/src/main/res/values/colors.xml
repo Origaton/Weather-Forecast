@@ -10,4 +10,7 @@
     <color name="soft_purple">#752995</color>
     <color name="soft_blue">#2A38B5</color>
     <color name="plates_color">#3CF1EBF1</color>
+    <color name="dark_blue">#080F47</color>
+    <color name="dark_purple">#4E0E68</color>
+    <color name="eggHintColor">#333333</color>
 </resources>

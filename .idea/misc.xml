@@ -4,9 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Weather-Forecast/app/src/main/res/drawable/gradient_background.xml" value="0.23981481481481481" />
+        <entry key="..\:/Weather-Forecast/app/src/main/res/drawable/gradient_info_background.xml" value="0.403125" />
+        <entry key="..\:/Weather-Forecast/app/src/main/res/drawable/round_layout.xml" value="0.403125" />
         <entry key="..\:/Weather-Forecast/app/src/main/res/layout/activity_main.xml" value="0.38697916666666665" />
         <entry key="..\:/Weather-Forecast/app/src/main/res/layout/group_list.xml" value="0.38697916666666665" />
         <entry key="..\:/Weather-Forecast/app/src/main/res/layout/locations_list.xml" value="0.38697916666666665" />
+        <entry key="..\:/Weather-Forecast/app/src/main/res/layout/weather_info_layout.xml" value="0.38697916666666665" />
+        <entry key="..\:/Weather-Forecast/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.403125" />
         <entry key="..\:/WeatherForecast/app/src/main/res/layout/activity_main.xml" value="0.38697916666666665" />
         <entry key="..\:/Work/Weather-Forecast/app/src/main/res/layout/activity_main.xml" value="0.38697916666666665" />
       </map>
