@@ -37,30 +37,16 @@ class MainActivity : AppCompatActivity() {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         CoroutineScope(Dispatchers.Main).launch {
-            checkPermission()
+            if (sharedPreference.contains("location") && sharedPreference.contains("weather")) {
+                showSavedData()
+            } else {
+                checkPermission()
+            }
         }
     }
 
     override fun onStart() {
         super.onStart()
-
-        if (sharedPreference.contains("location") && sharedPreference.contains("weather")) {
-            bindingClass.weatherInfoUpdating.visibility = ProgressBar.VISIBLE
-            val savedLocation: LocationInfo =
-                Gson().fromJson(
-                    sharedPreference.getString("location", ""),
-                    LocationInfo::class.java
-                )
-            val savedWeather: WeatherInfo =
-                Gson().fromJson(sharedPreference.getString("weather", ""), WeatherInfo::class.java)
-            if (savedLocation.cityName != null) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    getWeatherInfo(savedLocation)
-                }
-                viewHandlerInterface.storage(savedLocation, savedWeather)
-            }
-        }
-
         CoroutineScope(Dispatchers.Main).launch {
             getCustomLocation()
             refresh()
@@ -112,15 +98,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun getCurrentLocation(context: Context, defaultConfiguration: Boolean) {
-            locationInfo = withContext(Dispatchers.IO) {
-                if (defaultConfiguration) {
-                    LocationManager(context).setCurrentLocation(true)
-                } else {
-                    LocationManager(context).setCurrentLocation(false)
-                }
+        locationInfo = withContext(Dispatchers.IO) {
+            if (defaultConfiguration) {
+                LocationManager(context).setCurrentLocation(true)
+            } else {
+                LocationManager(context).setCurrentLocation(false)
             }
-            getWeatherInfo(locationInfo)
         }
+        getWeatherInfo(locationInfo)
+    }
 
     private suspend fun getCustomLocation() = coroutineScope {
         val field = bindingClass.currentLocation
@@ -173,6 +159,23 @@ class MainActivity : AppCompatActivity() {
         }
         viewHandlerInterface.storage(locationInfo, weatherInfo)
         bindingClass.weatherInfoUpdating.visibility = ProgressBar.GONE
+    }
+
+    private fun showSavedData() {
+        bindingClass.weatherInfoUpdating.visibility = ProgressBar.VISIBLE
+        val savedLocation: LocationInfo =
+            Gson().fromJson(
+                sharedPreference.getString("location", ""),
+                LocationInfo::class.java
+            )
+        val savedWeather: WeatherInfo =
+            Gson().fromJson(sharedPreference.getString("weather", ""), WeatherInfo::class.java)
+        if (savedLocation.cityName != null) {
+            CoroutineScope(Dispatchers.Main).launch {
+                getWeatherInfo(savedLocation)
+            }
+            viewHandlerInterface.storage(savedLocation, savedWeather)
+        }
     }
 
     private fun refresh() {
