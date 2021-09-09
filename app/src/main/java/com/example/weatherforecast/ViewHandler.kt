@@ -16,7 +16,7 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
     }
 
     override fun showCurrentWeather(locationInfo: LocationInfo, weatherInfo: WeatherInfo?) {
-        showCity(locationInfo.cityName)
+        showCity(locationInfo.cityName!!)
         if (weatherInfo != null) {
             val timeData: List<String> = DataConverter().convertCurrentTime(
                 weatherInfo.current.dt,
@@ -40,9 +40,9 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
             )
             showLastUpdateTime(timeData[0])
         }
-        bindingClass.weatherInfoLoading.visibility = ProgressBar.GONE
         bindingClass.easterEgg.visibility = View.VISIBLE
         bindingClass.forecastLayout.visibility = View.VISIBLE
+        bindingClass.weatherInfoLoading.visibility = ProgressBar.GONE
     }
 
     override fun showCity(city: String) {

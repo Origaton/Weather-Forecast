@@ -59,7 +59,7 @@ class LocationManager(private var context: Context) {
         return@coroutineScope LocationInfo(DEFAULT_CITY, DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
     }
 
-    suspend fun setCustomLocation(city: String): LocationInfo? = coroutineScope {
+    suspend fun setCustomLocation(city: String): LocationInfo = coroutineScope {
         val retrofit = Retrofit.Builder()
             .baseUrl(LOCATION_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -71,7 +71,7 @@ class LocationManager(private var context: Context) {
         }
         val customLocation = response.await()
         return@coroutineScope when (customLocation.isEmpty()) {
-            true -> null
+            true -> LocationInfo(null, null, null)
             false -> LocationInfo(
                 cityName = city,
                 latitude = customLocation[0].lat!!,

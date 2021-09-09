@@ -17,7 +17,7 @@ class WeatherManager(private val locationInfo: LocationInfo) {
         val api = retrofit.create(ApiRequests::class.java)
 
         val response = async(Dispatchers.IO) {
-            api.getWeatherInfo(locationInfo.latitude, locationInfo.longitude, appid = appid)
+            api.getWeatherInfo(locationInfo.latitude!!, locationInfo.longitude!!, appid = appid)
         }
         return@coroutineScope response.await()
     }
