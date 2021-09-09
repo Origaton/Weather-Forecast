@@ -4,10 +4,14 @@ import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.inputmethodservice.InputMethodService
 import android.os.Bundle
+import android.os.TokenWatcher
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         if (sharedPreference.contains("location") && sharedPreference.contains("weather")) {
             bindingClass.weatherInfoUpdating.visibility = ProgressBar.VISIBLE
+            Log.d("location_test", "fuck")
             val savedLocation: LocationInfo =
                 Gson().fromJson(
                     sharedPreference.getString("location", ""),
@@ -53,11 +58,15 @@ class MainActivity : AppCompatActivity() {
                 )
             val savedWeather: WeatherInfo =
                 Gson().fromJson(sharedPreference.getString("weather", ""), WeatherInfo::class.java)
-            viewHandlerInterface.storage(savedLocation, savedWeather)
+            Log.d("location_test", "$savedLocation")
+            if (savedLocation.cityName != null) {
+                viewHandlerInterface.storage(savedLocation, savedWeather)
+            }
         }
 
         CoroutineScope(Dispatchers.Main).launch {
             getCustomLocation()
+            refresh()
         }
     }
 
@@ -146,9 +155,12 @@ class MainActivity : AppCompatActivity() {
                                 viewHandlerInterface.hideLoading()
                             }
                         }
+
+                        val i = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        i.hideSoftInputFromWindow(field.windowToken, 0)
+
                         field.clearFocus()
                         field.hint = ""
-                        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
                     }
 
                     return true
@@ -164,6 +176,17 @@ class MainActivity : AppCompatActivity() {
         }
         viewHandlerInterface.storage(locationInfo, weatherInfo)
         bindingClass.weatherInfoUpdating.visibility = ProgressBar.GONE
+    }
+
+    private fun refresh() {
+        bindingClass.swipe.setOnRefreshListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                if (::locationInfo.isInitialized) {
+                    getWeatherInfo(locationInfo)
+                    bindingClass.swipe.isRefreshing = false
+                }
+            }
+        }
     }
 
     override fun onStop() {

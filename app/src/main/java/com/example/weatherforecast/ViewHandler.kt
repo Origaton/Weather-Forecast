@@ -23,6 +23,9 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
                 weatherInfo.current.sunrise,
                 weatherInfo.current.sunset
             )
+            val currentTime = timeData[0]
+            val sunRiseTime = timeData[1]
+            val sunSetTime = timeData[2]
             val pressure = DataConverter().hPaConvertToMmHg(weatherInfo.current.pressure)
 
             showCurrentTemperature(
@@ -31,14 +34,14 @@ class ViewHandler(private val bindingClass: ActivityMainBinding) : ViewHandlerIn
             )
             showWeatherParameters(
                 weatherInfo.current.weather[0].description,
-                timeData[1],
-                timeData[2],
+                sunRiseTime,
+                sunSetTime,
                 weatherInfo.current.wind_speed.toInt().toString(),
                 weatherInfo.current.humidity.toInt().toString(),
                 pressure,
                 weatherInfo.current.clouds.toInt().toString()
             )
-            showLastUpdateTime(timeData[0])
+            showLastUpdateTime(currentTime)
         }
         bindingClass.easterEgg.visibility = View.VISIBLE
         bindingClass.forecastLayout.visibility = View.VISIBLE
