@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
                             locationInfo = withContext(Dispatchers.IO) {
                                 LocationManager(context).setCustomLocation(field.text.toString())
                             }
-                            if (locationInfo.cityName != null) {
+                            if (locationInfo.latitude != null && locationInfo.longitude != null) {
                                 getWeatherInfo(locationInfo)
                             } else {
                                 Toast.makeText(
